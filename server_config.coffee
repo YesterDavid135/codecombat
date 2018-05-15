@@ -150,6 +150,9 @@ config.buildInfo = { sha: 'dev' }
 
 config.intercom =
   accessToken: process.env.COCO_INTERCOM_ACCESS_TOKEN or 'dGVzdA==' #base64 "test"
+
+config.zenProspect =
+  apiKey: process.env.COCO_ZENPROSPECT_API_KEY or ''
   
 config.apcspFileUrl = process.env.COCO_APCSP_FILE_URL or "http://localhost:#{config.port}/apcsp-local/"
 

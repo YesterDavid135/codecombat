@@ -5,6 +5,7 @@ Prepaid = require './models/Prepaid'
 Classroom = require './models/Classroom'
 TrialRequest = require './models/TrialRequest'
 co = require 'co'
+delighted = require('delighted')(config.mail.delightedAPIKey)
 
 ENGAGED_DELIGHTED_EMAIL_DELAY = 18 * 86400  # in seconds
 PAID_DELIGHTED_EMAIL_DELAY = 7 * 86400
@@ -69,3 +70,6 @@ module.exports.checkTriggerPrepaidAdded = (user, type) ->
     return unless trialRequest?
     status = if type is 'starter_license' then 'paid starter' else 'paid full'
     addDelightedUser user, trialRequest, status
+
+module.exports.unsubscribeEmail = (email) ->
+  delighted.unsubscribe.create(email)
