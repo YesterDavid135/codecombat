@@ -26,6 +26,7 @@ isTargetedCountry = (country) ->
   return false
 
 module.exports.maybeAddDelightedUser = addDelightedUser = (user, trialRequest, status='new') ->
+  return if user.get('unsubscribedFromEmails')
   props = trialRequest.get('properties')
   return unless trialRequest.get('type') is 'course'
   return unless isTargetedCountry props.country
@@ -55,6 +56,7 @@ module.exports.postPeople = (form) ->
 module.exports.checkTriggerClassroomCreated = (user) ->
   # Check if the user has exactly one classrom, if so, queue the email
   co () ->
+    return if user.get('unsubscribedFromEmails')
     count = yield Classroom.find(ownerID: user._id).count()
     return unless count is 1
     trialRequest = yield TrialRequest.findOne({applicant: user._id})
@@ -64,6 +66,7 @@ module.exports.checkTriggerClassroomCreated = (user) ->
 module.exports.checkTriggerPrepaidAdded = (user, type) ->
   # Check if the this is the first prepaid added to an account, if so, queue the email
   co () ->
+    return if user.get('unsubscribedFromEmails')
     count = yield Prepaid.find(creator: user._id).count()
     return unless count is 1
     trialRequest = yield TrialRequest.findOne({applicant: user._id})
