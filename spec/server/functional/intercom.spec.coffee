@@ -57,12 +57,16 @@ url = utils.getUrl('/webhooks/intercom')
 
 describe 'POST /webhooks/intercom', ->
   it 'returns 200 when it receives a ping', utils.wrap ->
-    [res] = yield request.postAsync({url, json: pingJson})
+    [res] = yield request.postAsync({url, json: pingJson, headers: {
+      'x-hub-signature': 'sha1=d3b43375515b1efe15839e4ce84b47ab7e0346db'
+    }})
     expect(res.statusCode).toBe(200)
     
   it 'calls unsubscribe.unsubscribeEmail for the given email for user.unsubscribed events', utils.wrap ->
     spyOn(unsubscribe, 'unsubscribeEmail')
-    [res] = yield request.postAsync({url, json: unsubscribeJson})
+    [res] = yield request.postAsync({url, json: unsubscribeJson, headers: {
+      'x-hub-signature': 'sha1=ebdf7fb43eafbbff8927625cea221131b03b170c'
+    }})
     expect(res.statusCode).toBe(200)
     expect(unsubscribe.unsubscribeEmail).toHaveBeenCalled()
     expect(unsubscribe.unsubscribeEmail.calls.argsFor(0)[0]).toBe(unsubscribeJson.data.item.email)

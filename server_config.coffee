@@ -150,6 +150,7 @@ config.buildInfo = { sha: 'dev' }
 
 config.intercom =
   accessToken: process.env.COCO_INTERCOM_ACCESS_TOKEN or 'dGVzdA==' #base64 "test"
+  webhookHubSecret: process.env.COCO_INTERCOM_WEBHOOK_HUB_SECRET or 'abcd'
 
 config.zenProspect =
   apiKey: process.env.COCO_ZENPROSPECT_API_KEY or ''

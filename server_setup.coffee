@@ -8,7 +8,7 @@ compressible = require 'compressible'
 compression = require 'compression'
 
 geoip = require '@basicer/geoip-lite'
-
+crypto = require 'crypto'
 database = require './server/commons/database'
 perfmon = require './server/commons/perfmon'
 baseRoute = require './server/routes/base'
@@ -146,7 +146,16 @@ setupExpressMiddleware = (app) ->
 
   app.use require('serve-favicon') path.join(__dirname, 'public', 'images', 'favicon.ico')
   app.use require('cookie-parser')()
-  app.use require('body-parser').json({limit: '25mb', strict: false})
+  app.use require('body-parser').json({limit: '25mb', strict: false, verify: (req, res, buf, encoding) ->
+    if req.headers['x-hub-signature']
+      console.log 'checking buf', JSON.stringify(buf.toString())
+      try
+        digest = crypto.createHmac('sha1', config.intercom.webhookHubSecret).update(buf).digest('hex')
+        console.log '?', req.headers['x-hub-signature'] is "sha1=#{digest}", req.headers['x-hub-signature'], "sha1=#{digest}"
+        req.signatureMatches = req.headers['x-hub-signature'] is "sha1=#{digest}"
+      catch e
+        console.log 'e', e
+  })
   app.use require('body-parser').urlencoded extended: true, limit: '25mb'
   app.use require('method-override')()
   app.use require('cookie-session')
