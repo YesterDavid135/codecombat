@@ -4,8 +4,10 @@ delighted = require '../delighted'
 config = require '../../server_config'
 request = require 'request'
 intercom = require '../lib/intercom'
+log = require 'winston'
 
 unsubscribeEmail = co.wrap (email) ->  
+  log.info "Completely unsubscribing email: #{email}"
   # set user to be unsubscribed forever if user exists
   user = yield User.findByEmail(email)
   if user
@@ -17,6 +19,7 @@ unsubscribeEmail = co.wrap (email) ->
       emails[key].enabled = false
 
     user.set('emails', emails)
+    user.set 'mailChimp', undefined
     # unsubscribe user from MailChimp
     yield user.save() # middleware takes care of unsubscribing MailChimp
 

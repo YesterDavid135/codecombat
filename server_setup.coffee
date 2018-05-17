@@ -148,13 +148,13 @@ setupExpressMiddleware = (app) ->
   app.use require('cookie-parser')()
   app.use require('body-parser').json({limit: '25mb', strict: false, verify: (req, res, buf, encoding) ->
     if req.headers['x-hub-signature']
-      console.log 'checking buf', JSON.stringify(buf.toString())
+      log.info 'Checking buffer: '+ JSON.stringify(buf.toString())
       try
         digest = crypto.createHmac('sha1', config.intercom.webhookHubSecret).update(buf).digest('hex')
-        console.log '?', req.headers['x-hub-signature'] is "sha1=#{digest}", req.headers['x-hub-signature'], "sha1=#{digest}"
+        log.info 'See if it matches', req.headers['x-hub-signature'] is "sha1=#{digest}", req.headers['x-hub-signature'], "sha1=#{digest}"
         req.signatureMatches = req.headers['x-hub-signature'] is "sha1=#{digest}"
       catch e
-        console.log 'e', e
+        log.info 'Error:', e
   })
   app.use require('body-parser').urlencoded extended: true, limit: '25mb'
   app.use require('method-override')()
